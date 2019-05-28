@@ -13,12 +13,12 @@ public class ProjectDto extends AbstractEntity {
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
-    private Date startingDate;
+    private Date startingDate = new Date();
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
-    private Date finishDate;
+    private Date finishDate = new Date();
 
-    private Status status;
+    private Status status = Status.PLANNED;
 
     private String userId;
 
@@ -68,5 +68,17 @@ public class ProjectDto extends AbstractEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectDto{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startingDate=" + startingDate +
+                ", finishDate=" + finishDate +
+                ", status=" + status +
+                ", userId='" + userId + '\'' +
+                "} " + super.toString();
     }
 }

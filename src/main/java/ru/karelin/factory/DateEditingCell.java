@@ -62,11 +62,7 @@ public class DateEditingCell extends TableCell<ProjectDto, Date> {
             System.out.println("Committed: " + datePicker.getValue().toString());
             commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         });
-//            datePicker.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-//                if (!newValue) {
-//                    commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-//                }
-//            });
+//
     }
 
 

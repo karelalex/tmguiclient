@@ -15,4 +15,11 @@ public abstract class AbstractEntity {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "AbstractEntity{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

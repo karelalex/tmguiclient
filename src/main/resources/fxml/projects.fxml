@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<HBox fx:controller="ru.karelin.gui.ProjectController" xmlns:fx="http://javafx.com/fxml">
-    <TableView fx:id="projectTable" editable="true">
-<columns>
-    <TableColumn fx:id="colId" text="Id" >
-        <cellValueFactory>
-            <PropertyValueFactory property="id"/>
-        </cellValueFactory>
-    </TableColumn>
-    <TableColumn fx:id="colName" text="Имя" >
-        <cellValueFactory>
-            <PropertyValueFactory property="name"/>
-        </cellValueFactory>
-    </TableColumn>
-    <TableColumn fx:id="colDesc" text="Описание" >
-        <cellValueFactory>
-            <PropertyValueFactory property="description" />
-        </cellValueFactory>
-    </TableColumn>
-    <TableColumn fx:id="colStartDate" text="Начало" >
-        <cellValueFactory>
-            <PropertyValueFactory property="startingDate" />
-        </cellValueFactory>
-    </TableColumn>
-    <TableColumn fx:id="colFinishDate" text="Окончание" >
-        <cellValueFactory>
-            <PropertyValueFactory property="finishDate"/>
-        </cellValueFactory>
-    </TableColumn>
-    <TableColumn fx:id="colStatus" text="Статус" >
+<VBox fx:controller="ru.karelin.gui.ProjectController" xmlns:fx="http://javafx.com/fxml">
+    <TableView fx:id="projectTable" editable="true" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="Id">
+                <cellValueFactory>
+                    <PropertyValueFactory property="id"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colName" text="Имя">
+                <cellValueFactory>
+                    <PropertyValueFactory property="name"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colDesc" text="Описание" maxWidth="400">
+                <cellValueFactory>
+                    <PropertyValueFactory property="description"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colStartDate" text="Начало">
+                <cellValueFactory>
+                    <PropertyValueFactory property="startingDate"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colFinishDate" text="Окончание">
+                <cellValueFactory>
+                    <PropertyValueFactory property="finishDate"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colStatus" text="Статус">
 
-    </TableColumn>
-</columns>
+            </TableColumn>
+        </columns>
     </TableView>
-</HBox>
+    <HBox>
+        <Button onAction="#removeProject" text="Удалить"/>
+        <Button onAction="#createProject" text="Создать"/>
+        <Button onAction="#updateList" text="Обновить"/>
+        <Separator prefWidth="50" />
+        <Button onAction="#logout" text="Завершить"/>
+    </HBox>
+</VBox>
