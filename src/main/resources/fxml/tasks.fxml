@@ -5,13 +5,15 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<VBox fx:controller="ru.karelin.gui.ProjectController" xmlns:fx="http://javafx.com/fxml">
-    <TableView fx:id="projectTable" editable="true" VBox.vgrow="ALWAYS">
+<VBox fx:controller="ru.karelin.gui.TaskController" xmlns:fx="http://javafx.com/fxml">
+    <TableView fx:id="taskTable" editable="true" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colId" text="Id" editable="false">
                 <cellValueFactory>
                     <PropertyValueFactory property="id"/>
                 </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colProjectName" text="Имя проекта" editable="false">
             </TableColumn>
             <TableColumn fx:id="colName" text="Имя">
                 <cellValueFactory>
@@ -34,14 +36,16 @@
                 </cellValueFactory>
             </TableColumn>
             <TableColumn fx:id="colStatus" text="Статус">
+
             </TableColumn>
         </columns>
     </TableView>
     <HBox>
-        <Button onAction="#removeProject" text="Удалить"/>
-        <Button onAction="#createProject" text="Создать"/>
+        <Button onAction="#removeTask" text="Удалить"/>
+        <Button onAction="#createTask" text="Создать"/>
         <Button onAction="#updateList" text="Обновить"/>
-        <Button onAction="#showTasks" text="Задачи" />
+        <Button onAction="#showAll" text="Всё"/>
+        <Button onAction="#showProjects" text="Проекты" />
         <Separator prefWidth="50" />
         <Button onAction="#logout" text="Завершить"/>
     </HBox>

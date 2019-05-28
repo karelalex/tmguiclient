@@ -27,6 +27,7 @@ public class HelloController extends Controller implements ApplicationContextAwa
     @FXML private Label messageLabel;
     @FXML private Button projectButton;
     @FXML private Button loginButton;
+    @FXML private Button taskButton;
 
     public void sayHello() {
 
@@ -37,6 +38,7 @@ public class HelloController extends Controller implements ApplicationContextAwa
         if(sessionService.login(login, password)){
             messageLabel.setText("Вы успешно вошли в систему");
             projectButton.setVisible(true);
+            taskButton.setVisible(true);
             loginButton.setVisible(false);
             loginButton.setManaged(false);
         }
@@ -50,6 +52,12 @@ public class HelloController extends Controller implements ApplicationContextAwa
         Stage stage = (Stage) messageLabel.getScene().getWindow();
         stage.setTitle("Список проектов");
         stage.setScene(StageLoader.loadProjects());
+    }
+
+    public void showTasks() throws IOException {
+        Stage stage = (Stage) messageLabel.getScene().getWindow();
+        stage.setTitle("Список задач");
+        stage.setScene(StageLoader.loadTasks());
     }
 
 }

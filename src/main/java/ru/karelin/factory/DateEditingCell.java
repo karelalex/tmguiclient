@@ -2,7 +2,6 @@ package ru.karelin.factory;
 
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
-import ru.karelin.dto.ProjectDto;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -10,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
-public class DateEditingCell extends TableCell<ProjectDto, Date> {
+public class DateEditingCell<T> extends TableCell<T, Date> {
     private DatePicker datePicker;
 
     public DateEditingCell() {

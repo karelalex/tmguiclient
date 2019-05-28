@@ -7,17 +7,17 @@ import java.util.Date;
 
 
 public class TaskDto extends AbstractEntity {
-    private String name;
+    private String name = "Имя Задачи";
 
-    private String description;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
-    private Date startingDate;
+    private String description = "Описание задачи";
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
-    private Date finishDate;
+    private Date startingDate = new Date();
 
-    private Status status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
+    private Date finishDate = new Date();
+
+    private Status status = Status.PLANNED;
 
     private String  projectId;
 

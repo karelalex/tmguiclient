@@ -1,5 +1,6 @@
 package ru.karelin.gui;
 
+import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
@@ -18,15 +20,24 @@ import ru.karelin.enumeration.Status;
 import ru.karelin.factory.DateEditingCell;
 import ru.karelin.factory.StatusComboBoxEditingCell;
 import ru.karelin.rest.ProjectService;
+import ru.karelin.rest.SessionService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Component
 public class ProjectController extends Controller implements Initializable, ApplicationContextAware {
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    SessionService sessionService;
+
+    @Autowired
+    TaskController taskController;
 
     private ObservableList<ProjectDto> projectList;
 
@@ -56,9 +67,9 @@ public class ProjectController extends Controller implements Initializable, Appl
         projectList.addAll(projectService.getProjectList());
 
         Callback<TableColumn<ProjectDto, Date>, TableCell<ProjectDto, Date>> dateCellFactory
-                = (TableColumn<ProjectDto, Date> param) -> new DateEditingCell();
+                = (TableColumn<ProjectDto, Date> param) -> new DateEditingCell<>();
         Callback<TableColumn<ProjectDto, Status>, TableCell<ProjectDto, Status>> comboCellFactory
-                = (TableColumn<ProjectDto, Status> param) -> new StatusComboBoxEditingCell();
+                = (TableColumn<ProjectDto, Status> param) -> new StatusComboBoxEditingCell<>();
         colName.setCellFactory(TextFieldTableCell.forTableColumn());
         colName.setOnEditCommit(
                 (TableColumn.CellEditEvent<ProjectDto, String> t) -> {
@@ -127,7 +138,25 @@ public class ProjectController extends Controller implements Initializable, Appl
         projectList.addAll(projectService.getProjectList());
     }
 
-    public void logout() {
+    public void logout() throws IOException {
+        if(sessionService.logout()){
+            StageLoader.loadMain().show();
+            projectTable.getScene().getWindow().hide();
+        }
+    }
+    public void showTasks() throws IOException {
+        @Nullable final ProjectDto projectDto = projectTable.getSelectionModel().getSelectedItem();
+        if(projectDto==null) {
+            taskController.setProjectId(null);
+        }
+        else {
+            taskController.setProjectId(projectDto.getId());
+        }
+        Stage stage = (Stage) projectTable.getScene().getWindow();
+        stage.setTitle("Список задач");
+        stage.setScene(StageLoader.loadTasks());
 
     }
+
+
 }

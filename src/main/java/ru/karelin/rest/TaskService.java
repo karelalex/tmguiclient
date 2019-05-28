@@ -3,98 +3,90 @@ package ru.karelin.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import ru.karelin.dto.ProjectDto;
+import org.springframework.web.util.UriComponentsBuilder;
+import ru.karelin.dto.TaskDto;
 import ru.karelin.dto.Result;
+import ru.karelin.dto.TaskDto;
 
 import java.util.Collections;
 import java.util.List;
 
 @Component
-public class ProjectService {
+public class TaskService {
     @Autowired
     CookieStorage cookieStorage;
 
-    @Autowired
-    ProjectMapStorage projectMapStorage;
+    private RestTemplate restTemplate = new RestTemplate();
+    private final String URL = "http://localhost:9090/taskman/rest/task";
 
-    RestTemplate restTemplate = new RestTemplate();
-    private final String URL = "http://localhost:9090/taskman/rest/project";
-
-    public List<ProjectDto> getProjectList() {
+    public List<TaskDto> getTaskList(@Nullable final String projectId) {
+        String url;
+        if(projectId==null || projectId.isEmpty()){
+            url=URL;
+        }
+        else {
+            url=  UriComponentsBuilder.fromHttpUrl(URL)
+                    .queryParam("projectId", projectId)
+                    .toUriString();
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.addAll("Cookie", cookieStorage.getCookies());
-        ResponseEntity<List<ProjectDto>> response = restTemplate.exchange(
-                URL,
+        ResponseEntity<List<TaskDto>> response = restTemplate.exchange(
+                url,
                 HttpMethod.GET,
                 new HttpEntity<String>(headers),
-                new ParameterizedTypeReference<List<ProjectDto>>() {
+                new ParameterizedTypeReference<List<TaskDto>>() {
                 });
         if (response.getBody() == null) {
             return Collections.EMPTY_LIST;
         }
-        projectMapStorage.updateItems(response.getBody());
         return response.getBody();
     }
 
-    public ProjectDto getProject(String id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.addAll("Cookie", cookieStorage.getCookies());
-        ResponseEntity<ProjectDto> response = restTemplate.exchange(
-                URL + "/" + id,
-                HttpMethod.GET,
-                new HttpEntity<String>(headers),
-                ProjectDto.class);
-        if (response.getBody() == null) {
-            return null;
-        }
-        projectMapStorage.addItem(response.getBody());
-        return response.getBody();
-    }
-
-    public ProjectDto create() {
-        ProjectDto projectInit = new ProjectDto();
+    public TaskDto create(String projectId) {
+        TaskDto taskInit = new TaskDto();
+        taskInit.setProjectId(projectId);
         HttpHeaders headers = new HttpHeaders();
         headers.addAll("Cookie", cookieStorage.getCookies());
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<Result> response = restTemplate.exchange(
                 URL,
                 HttpMethod.POST,
-                new HttpEntity<>(projectInit, headers),
+                new HttpEntity<>(taskInit, headers),
                 Result.class);
         if (response.getBody().isSuccess()) {
             headers.setContentType(MediaType.TEXT_PLAIN);
-            ResponseEntity<ProjectDto> response2 = restTemplate.exchange(
-                    URL + "/" + projectInit.getId(),
+            ResponseEntity<TaskDto> response2 = restTemplate.exchange(
+                    URL + "/" + taskInit.getId(),
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    ProjectDto.class);
+                    TaskDto.class);
             return response2.getBody();
         }
         return null;
     }
 
-    public boolean update(ProjectDto projectDto) {
-        projectMapStorage.removeItem(projectDto);
+    public boolean update(TaskDto taskDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.addAll("Cookie", cookieStorage.getCookies());
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<Result> response = restTemplate.exchange(
                 URL,
                 HttpMethod.PUT,
-                new HttpEntity<>(projectDto, headers),
+                new HttpEntity<>(taskDto, headers),
                 Result.class);
         return response.getBody() != null && response.getBody().isSuccess();
     }
 
-    public boolean delete(ProjectDto projectDto) {
-        projectMapStorage.removeItem(projectDto);
+    public boolean delete(TaskDto taskDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.addAll("Cookie", cookieStorage.getCookies());
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<Result> response = restTemplate.exchange(
-                URL + "/" + projectDto.getId(),
+                URL + "/" + taskDto.getId(),
                 HttpMethod.DELETE,
                 new HttpEntity<>(headers),
                 Result.class);

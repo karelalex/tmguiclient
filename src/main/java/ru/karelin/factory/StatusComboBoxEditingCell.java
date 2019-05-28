@@ -7,10 +7,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import ru.karelin.dto.ProjectDto;
 import ru.karelin.enumeration.Status;
 
-public class StatusComboBoxEditingCell extends TableCell<ProjectDto, Status> {
+public class StatusComboBoxEditingCell<T> extends TableCell<T, Status> {
 
         private ComboBox<Status> comboBox;
 
@@ -30,7 +29,6 @@ public class StatusComboBoxEditingCell extends TableCell<ProjectDto, Status> {
         @Override
         public void cancelEdit() {
             super.cancelEdit();
-
             setText(getItem().getDisplayName());
             setGraphic(null);
         }

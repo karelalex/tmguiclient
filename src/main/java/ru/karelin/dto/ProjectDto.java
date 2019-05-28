@@ -8,9 +8,9 @@ import java.util.Date;
 
 
 public class ProjectDto extends AbstractEntity {
-    private String name;
+    private String name = "Имя проекта";
 
-    private String description;
+    private String description = "Описание проекта";
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
     private Date startingDate = new Date();
@@ -72,13 +72,6 @@ public class ProjectDto extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "ProjectDto{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", startingDate=" + startingDate +
-                ", finishDate=" + finishDate +
-                ", status=" + status +
-                ", userId='" + userId + '\'' +
-                "} " + super.toString();
+        return name;
     }
 }

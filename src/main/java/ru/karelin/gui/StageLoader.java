@@ -42,7 +42,13 @@ public class StageLoader implements ApplicationContextAware {
     }
 
     public static Scene loadProjects() throws IOException {
-        Scene scene = new Scene(load("projects"), 1000, 700);
+        Scene scene = new Scene(load("projects"), 1300, 700);
+        scene.getStylesheets().add("/styles/styles.css");
+        return scene;
+    }
+
+    public static Scene loadTasks() throws IOException {
+        Scene scene = new Scene(load("tasks"), 1300, 700);
         scene.getStylesheets().add("/styles/styles.css");
         return scene;
     }

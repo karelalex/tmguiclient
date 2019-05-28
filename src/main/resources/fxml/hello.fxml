@@ -6,25 +6,31 @@
 <?import org.tbee.javafx.scene.layout.fxml.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<GridPane id="rootPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="ru.karelin.gui.HelloController">
-   <children>
-   
-       <Label text="Логин:"  GridPane.rowIndex="1" GridPane.columnIndex="1" /> <TextField fx:id="loginField" prefColumnCount="30" GridPane.rowIndex="1" GridPane.columnIndex="2" />
-       <Label text="Пароль:" GridPane.rowIndex="2" GridPane.columnIndex="1"/>	<PasswordField fx:id="passwordField" prefColumnCount="30" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-   
-       <Button fx:id="loginButton" onAction="#sayHello" text="Войти" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-       <Button fx:id="projectButton" onAction="#showProjects" text="Проекты" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-       <Label fx:id="messageLabel" styleClass="hello-message" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-   </children>
-   <columnConstraints>
-      <ColumnConstraints  />
-      <ColumnConstraints minWidth="40.0" prefWidth="100.0" />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" />
-   </rowConstraints>
+<GridPane id="rootPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+          fx:controller="ru.karelin.gui.HelloController">
+    <children>
+
+        <Label text="Логин:" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <TextField fx:id="loginField" prefColumnCount="30" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+        <Label text="Пароль:" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <PasswordField fx:id="passwordField" prefColumnCount="30" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+        <HBox GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <Button fx:id="loginButton" onAction="#sayHello" text="Войти"/>
+            <Button fx:id="projectButton" onAction="#showProjects" text="Проекты" visible="false"/>
+            <Button fx:id="taskButton" onAction="#showTasks" text="Задачи" visible="false"/>
+        </HBox>
+        <Label fx:id="messageLabel" styleClass="hello-message" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+    </children>
+    <columnConstraints>
+        <ColumnConstraints/>
+        <ColumnConstraints minWidth="40.0" prefWidth="100.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints/>
+        <RowConstraints/>
+        <RowConstraints/>
+        <RowConstraints minHeight="10.0" prefHeight="30.0"/>
+    </rowConstraints>
 
 </GridPane>
