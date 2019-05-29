@@ -5,10 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
@@ -70,6 +67,9 @@ public class TaskController extends Controller implements Initializable, Applica
     @FXML
     private TableView<TaskDto> taskTable;
 
+    @FXML
+    private Button changeProjectButton;
+
     public void initialize(URL location, ResourceBundle resources) {
         taskList = FXCollections.observableArrayList();
         taskList.addAll(taskService.getTaskList(projectId));
@@ -129,7 +129,15 @@ public class TaskController extends Controller implements Initializable, Applica
             }
         });
         taskTable.setItems(taskList);
-
+        taskTable.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                changeProjectButton.setVisible(false);
+                changeProjectButton.setManaged(false);
+            } else {
+                changeProjectButton.setVisible(true);
+                changeProjectButton.setManaged(true);
+            }
+        }));
     }
 
 
@@ -172,8 +180,8 @@ public class TaskController extends Controller implements Initializable, Applica
         }
     }
 
-    public void showAll(){
-        projectId=null;
+    public void showAll() {
+        projectId = null;
         updateList();
     }
 
@@ -181,6 +189,28 @@ public class TaskController extends Controller implements Initializable, Applica
         Stage stage = (Stage) taskTable.getScene().getWindow();
         stage.setTitle("Список проектов");
         stage.setScene(StageLoader.loadProjects());
+    }
+
+    public void changeProject() {
+        TaskDto taskDto = taskTable.getSelectionModel().getSelectedItem();
+        if (taskDto == null) return;
+        ChoiceDialog<ProjectDto> choiceDialog = new ChoiceDialog<>();
+        choiceDialog.getItems().addAll(projectMapStorage.getAll());
+        choiceDialog.setTitle("Выбор проекта");
+        choiceDialog.setContentText("Выбирай проект из списка");
+        Optional<ProjectDto> optional = choiceDialog.showAndWait();
+        optional.ifPresent(projectDto -> {
+            String oldProjectId = taskDto.getProjectId();
+            taskDto.setProjectId(projectDto.getId());
+            if(taskService.update(taskDto))
+            taskTable.refresh();
+            else taskDto.setProjectId(oldProjectId);
+        });
+        if (projectId != null && !projectId.isEmpty()) {
+            optional.ifPresent(projectDto -> projectId = projectDto.getId());
+            updateList();
+        }
+
     }
 
     public String getProjectId() {

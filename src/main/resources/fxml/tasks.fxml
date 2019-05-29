@@ -44,6 +44,7 @@
         <Button onAction="#removeTask" text="Удалить"/>
         <Button onAction="#createTask" text="Создать"/>
         <Button onAction="#updateList" text="Обновить"/>
+        <Button fx:id="changeProjectButton" onAction="#changeProject" text="Сменить проект" visible="false" managed="false"/>
         <Button onAction="#showAll" text="Всё"/>
         <Button onAction="#showProjects" text="Проекты" />
         <Separator prefWidth="50" />
