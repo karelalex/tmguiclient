@@ -20,6 +20,7 @@ import ru.karelin.enumeration.Status;
 import ru.karelin.factory.DateEditingCell;
 import ru.karelin.factory.StatusComboBoxEditingCell;
 import ru.karelin.rest.LoginRestControllerI;
+import ru.karelin.rest.ProjectMapStorage;
 import ru.karelin.rest.ProjectRestControllerI;
 
 import java.io.IOException;
@@ -37,6 +38,9 @@ public class ProjectController extends Controller implements Initializable, Appl
 
     @Autowired
     TaskController taskController;
+
+    @Autowired
+    ProjectMapStorage projectMapStorage;
 
     private ObservableList<ProjectDto> projectList;
 
@@ -64,6 +68,7 @@ public class ProjectController extends Controller implements Initializable, Appl
     public void initialize(URL location, ResourceBundle resources) {
         projectList = FXCollections.observableArrayList();
         projectList.addAll(projectRestController.getProjectList());
+        projectMapStorage.updateItems(projectList);
 
         Callback<TableColumn<ProjectDto, Date>, TableCell<ProjectDto, Date>> dateCellFactory
                 = (TableColumn<ProjectDto, Date> param) -> new DateEditingCell<>();
@@ -77,6 +82,9 @@ public class ProjectController extends Controller implements Initializable, Appl
                     projectDto.setName(t.getNewValue());
                     if (!projectRestController.editProject(projectDto).isSuccess()) {
                         projectDto.setName(t.getOldValue());
+                    }
+                    else {
+                        projectMapStorage.removeItem(projectDto);
                     }
 
                 });
@@ -133,6 +141,7 @@ public class ProjectController extends Controller implements Initializable, Appl
         ProjectDto project = projectTable.getSelectionModel().getSelectedItem();
         if (projectRestController.removeProject(project.getId()).isSuccess()) {
             projectList.remove(project);
+            projectMapStorage.removeItem(project);
         }
     }
 

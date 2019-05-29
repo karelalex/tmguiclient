@@ -38,6 +38,7 @@ public class ProjectMapStorage {
         ProjectDto projectDto = map.get(id);
         if(projectDto==null){
             projectDto=projectRestController.getProject(id);
+            addItem(projectDto);
         }
         return projectDto;
     }
@@ -45,6 +46,10 @@ public class ProjectMapStorage {
     public List<ProjectDto> getAll() {
         if(full)
         return new ArrayList<ProjectDto>(map.values());
-        else return projectRestController.getProjectList();
+        else {
+            final List<ProjectDto> projectList = projectRestController.getProjectList();
+            updateItems(projectList);
+            return projectList;
+        }
     }
 }

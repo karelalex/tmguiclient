@@ -155,7 +155,7 @@ public class TaskController extends Controller implements Initializable, Applica
         }
         if (idForProject != null && !idForProject.isEmpty()) {
             TaskDto taskInit = new TaskDto();
-            taskInit.setProjectId(projectId);
+            taskInit.setProjectId(idForProject);
             if(taskRestController.createTask(taskInit).isSuccess()){
                 TaskDto taskDto = taskRestController.getTask(taskInit.getId());
                 if (taskDto != null) taskList.add(taskDto);
