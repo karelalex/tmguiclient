@@ -13,7 +13,7 @@ import java.util.Map;
 public class ProjectMapStorage {
 
     @Autowired
-    ProjectService projectService;
+    ProjectRestControllerI projectRestController;
     private Map<String, ProjectDto> map = new HashMap<>();
     private boolean full=false;
 
@@ -37,7 +37,7 @@ public class ProjectMapStorage {
     public ProjectDto getItem(String id){
         ProjectDto projectDto = map.get(id);
         if(projectDto==null){
-            projectDto=projectService.getProject(id);
+            projectDto=projectRestController.getProject(id);
         }
         return projectDto;
     }
@@ -45,6 +45,6 @@ public class ProjectMapStorage {
     public List<ProjectDto> getAll() {
         if(full)
         return new ArrayList<ProjectDto>(map.values());
-        else return projectService.getProjectList();
+        else return projectRestController.getProjectList();
     }
 }

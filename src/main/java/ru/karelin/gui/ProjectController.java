@@ -19,22 +19,21 @@ import ru.karelin.dto.ProjectDto;
 import ru.karelin.enumeration.Status;
 import ru.karelin.factory.DateEditingCell;
 import ru.karelin.factory.StatusComboBoxEditingCell;
-import ru.karelin.rest.ProjectService;
-import ru.karelin.rest.SessionService;
+import ru.karelin.rest.LoginRestControllerI;
+import ru.karelin.rest.ProjectRestControllerI;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Component
 public class ProjectController extends Controller implements Initializable, ApplicationContextAware {
     @Autowired
-    ProjectService projectService;
+    ProjectRestControllerI projectRestController;
 
     @Autowired
-    SessionService sessionService;
+    LoginRestControllerI loginRestController;
 
     @Autowired
     TaskController taskController;
@@ -64,7 +63,7 @@ public class ProjectController extends Controller implements Initializable, Appl
 
     public void initialize(URL location, ResourceBundle resources) {
         projectList = FXCollections.observableArrayList();
-        projectList.addAll(projectService.getProjectList());
+        projectList.addAll(projectRestController.getProjectList());
 
         Callback<TableColumn<ProjectDto, Date>, TableCell<ProjectDto, Date>> dateCellFactory
                 = (TableColumn<ProjectDto, Date> param) -> new DateEditingCell<>();
@@ -76,7 +75,7 @@ public class ProjectController extends Controller implements Initializable, Appl
                     ProjectDto projectDto = t.getTableView().getItems()
                             .get(t.getTablePosition().getRow());
                     projectDto.setName(t.getNewValue());
-                    if (!projectService.update(projectDto)) {
+                    if (!projectRestController.editProject(projectDto).isSuccess()) {
                         projectDto.setName(t.getOldValue());
                     }
 
@@ -85,7 +84,7 @@ public class ProjectController extends Controller implements Initializable, Appl
         colDesc.setOnEditCommit((TableColumn.CellEditEvent<ProjectDto, String> t) -> {
             ProjectDto projectDto = t.getTableView().getItems().get(t.getTablePosition().getRow());
             projectDto.setDescription(t.getNewValue());
-            if (!projectService.update(projectDto)) {
+            if (!projectRestController.editProject(projectDto).isSuccess()) {
                 projectDto.setDescription(t.getOldValue());
             }
         });
@@ -94,7 +93,7 @@ public class ProjectController extends Controller implements Initializable, Appl
             final ProjectDto project = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
             project.setStartingDate(t.getNewValue());
-            if(!projectService.update(project)){
+            if(!projectRestController.editProject(project).isSuccess()){
                 project.setStartingDate(t.getOldValue());
             }
         });
@@ -103,7 +102,7 @@ public class ProjectController extends Controller implements Initializable, Appl
             final ProjectDto project = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
             project.setFinishDate(t.getNewValue());
-            if(!projectService.update(project)){
+            if(!projectRestController.editProject(project).isSuccess()){
                 project.setFinishDate(t.getOldValue());
             }
         });
@@ -113,7 +112,7 @@ public class ProjectController extends Controller implements Initializable, Appl
             ProjectDto project = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
             project.setStatus(t.getNewValue());
-            if (!projectService.update(project)) {
+            if (!projectRestController.editProject(project).isSuccess()) {
                 project.setStatus(t.getOldValue());
             }
         });
@@ -122,24 +121,28 @@ public class ProjectController extends Controller implements Initializable, Appl
 
 
     public void createProject() {
-        ProjectDto projectDto = projectService.create();
-        if (projectDto != null) projectList.add(projectDto);
+        ProjectDto projectInit = new ProjectDto();
+        if(projectRestController.createProject(projectInit).isSuccess()){
+            ProjectDto projectDto = projectRestController.getProject(projectInit.getId());
+            if (projectDto != null) projectList.add(projectDto);
+        }
+
     }
 
     public void removeProject() {
         ProjectDto project = projectTable.getSelectionModel().getSelectedItem();
-        if (projectService.delete(project)) {
+        if (projectRestController.removeProject(project.getId()).isSuccess()) {
             projectList.remove(project);
         }
     }
 
     public void updateList() {
         projectList.clear();
-        projectList.addAll(projectService.getProjectList());
+        projectList.addAll(projectRestController.getProjectList());
     }
 
     public void logout() throws IOException {
-        if(sessionService.logout()){
+        if(loginRestController.logout().isSuccess()){
             StageLoader.loadMain().show();
             projectTable.getScene().getWindow().hide();
         }

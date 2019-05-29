@@ -6,12 +6,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import ru.karelin.rest.SessionService;
+import ru.karelin.rest.LoginRestControllerI;
 
 import java.io.IOException;
 
@@ -19,7 +17,7 @@ import java.io.IOException;
 public class HelloController extends Controller implements ApplicationContextAware
 {
     @Autowired
-    SessionService sessionService;
+    LoginRestControllerI loginRestController;
 
 
     @FXML private TextField loginField;
@@ -35,7 +33,7 @@ public class HelloController extends Controller implements ApplicationContextAwa
         String password = passwordField.getText();
 
 
-        if(sessionService.login(login, password)){
+        if(loginRestController.login(login, password).isSuccess()){
             messageLabel.setText("Вы успешно вошли в систему");
             projectButton.setVisible(true);
             taskButton.setVisible(true);

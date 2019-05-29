@@ -18,9 +18,7 @@ import ru.karelin.dto.TaskDto;
 import ru.karelin.enumeration.Status;
 import ru.karelin.factory.DateEditingCell;
 import ru.karelin.factory.StatusComboBoxEditingCell;
-import ru.karelin.rest.ProjectMapStorage;
-import ru.karelin.rest.SessionService;
-import ru.karelin.rest.TaskService;
+import ru.karelin.rest.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,10 +29,10 @@ import java.util.ResourceBundle;
 @Component
 public class TaskController extends Controller implements Initializable, ApplicationContextAware {
     @Autowired
-    TaskService taskService;
+    TaskRestControllerI taskRestController;
 
     @Autowired
-    SessionService sessionService;
+    LoginRestControllerI loginRestController;
 
     @Autowired
     ProjectMapStorage projectMapStorage;
@@ -72,7 +70,7 @@ public class TaskController extends Controller implements Initializable, Applica
 
     public void initialize(URL location, ResourceBundle resources) {
         taskList = FXCollections.observableArrayList();
-        taskList.addAll(taskService.getTaskList(projectId));
+        taskList.addAll(taskRestController.getTaskList(projectId));
 
         Callback<TableColumn<TaskDto, Date>, TableCell<TaskDto, Date>> dateCellFactory
                 = (TableColumn<TaskDto, Date> param) -> new DateEditingCell<TaskDto>();
@@ -87,7 +85,7 @@ public class TaskController extends Controller implements Initializable, Applica
                     TaskDto taskDto = t.getTableView().getItems()
                             .get(t.getTablePosition().getRow());
                     taskDto.setName(t.getNewValue());
-                    if (!taskService.update(taskDto)) {
+                    if (!taskRestController.editTask(taskDto).isSuccess()) {
                         taskDto.setName(t.getOldValue());
                     }
 
@@ -96,17 +94,17 @@ public class TaskController extends Controller implements Initializable, Applica
         colDesc.setOnEditCommit((TableColumn.CellEditEvent<TaskDto, String> t) -> {
             TaskDto taskDto = t.getTableView().getItems().get(t.getTablePosition().getRow());
             taskDto.setDescription(t.getNewValue());
-            if (!taskService.update(taskDto)) {
+            if (!taskRestController.editTask(taskDto).isSuccess()) {
                 taskDto.setDescription(t.getOldValue());
             }
         });
         colStartDate.setCellFactory(dateCellFactory);
         colStartDate.setOnEditCommit((TableColumn.CellEditEvent<TaskDto, Date> t) -> {
-            final TaskDto task = t.getTableView().getItems()
+            final TaskDto taskDto = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
-            task.setStartingDate(t.getNewValue());
-            if (!taskService.update(task)) {
-                task.setStartingDate(t.getOldValue());
+            taskDto.setStartingDate(t.getNewValue());
+            if (!taskRestController.editTask(taskDto).isSuccess()) {
+                taskDto.setStartingDate(t.getOldValue());
             }
         });
         colFinishDate.setCellFactory(dateCellFactory);
@@ -114,7 +112,7 @@ public class TaskController extends Controller implements Initializable, Applica
             final TaskDto task = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
             task.setFinishDate(t.getNewValue());
-            if (!taskService.update(task)) {
+            if (!taskRestController.editTask(task).isSuccess()) {
                 task.setFinishDate(t.getOldValue());
             }
         });
@@ -124,7 +122,7 @@ public class TaskController extends Controller implements Initializable, Applica
             TaskDto task = t.getTableView().getItems()
                     .get(t.getTablePosition().getRow());
             task.setStatus(t.getNewValue());
-            if (!taskService.update(task)) {
+            if (!taskRestController.editTask(task).isSuccess()) {
                 task.setStatus(t.getOldValue());
             }
         });
@@ -156,25 +154,30 @@ public class TaskController extends Controller implements Initializable, Applica
             idForProject = projectId;
         }
         if (idForProject != null && !idForProject.isEmpty()) {
-            TaskDto taskDto = taskService.create(idForProject);
-            if (taskDto != null) taskList.add(taskDto);
+            TaskDto taskInit = new TaskDto();
+            taskInit.setProjectId(projectId);
+            if(taskRestController.createTask(taskInit).isSuccess()){
+                TaskDto taskDto = taskRestController.getTask(taskInit.getId());
+                if (taskDto != null) taskList.add(taskDto);
+            }
+
         }
     }
 
     public void removeTask() {
         TaskDto task = taskTable.getSelectionModel().getSelectedItem();
-        if (taskService.delete(task)) {
+        if (taskRestController.removeTask(task.getId()).isSuccess()) {
             taskList.remove(task);
         }
     }
 
     public void updateList() {
         taskList.clear();
-        taskList.addAll(taskService.getTaskList(projectId));
+        taskList.addAll(taskRestController.getTaskList(projectId));
     }
 
     public void logout() throws IOException {
-        if (sessionService.logout()) {
+        if (loginRestController.logout().isSuccess()) {
             StageLoader.loadMain().show();
             taskTable.getScene().getWindow().hide();
         }
@@ -202,7 +205,7 @@ public class TaskController extends Controller implements Initializable, Applica
         optional.ifPresent(projectDto -> {
             String oldProjectId = taskDto.getProjectId();
             taskDto.setProjectId(projectDto.getId());
-            if(taskService.update(taskDto))
+            if(taskRestController.editTask(taskDto).isSuccess())
             taskTable.refresh();
             else taskDto.setProjectId(oldProjectId);
         });
