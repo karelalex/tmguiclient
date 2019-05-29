@@ -20,7 +20,7 @@ public class HelloController extends Controller implements ApplicationContextAwa
 {
     @Autowired
     SessionService sessionService;
-    private static final Logger log = LoggerFactory.getLogger(HelloController.class);
+
 
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
